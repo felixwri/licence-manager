@@ -5,7 +5,9 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LicenseeRecords.Web", "LicenseeRecords.Web\LicenseeRecords.Web.csproj", "{1B1857A7-FFBA-4649-B829-3EA73A67E8A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LicenseeRecords.WebAPI", "LicenseeRecords.WebAPI\LicenseeRecords.WebAPI.csproj", "{8800CFF8-0DC6-4B31-BDE8-815854A63D19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LicenseeRecords.WebAPI", "LicenseeRecords.WebAPI\LicenseeRecords.WebAPI.csproj", "{8800CFF8-0DC6-4B31-BDE8-815854A63D19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LicenseeRecords.WebAPI.Tests", "LicenseeRecords.WebAPI.Tests\LicenseeRecords.WebAPI.Tests.csproj", "{C284AA9D-D6A3-4B87-9714-F1E6F9183A80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8800CFF8-0DC6-4B31-BDE8-815854A63D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8800CFF8-0DC6-4B31-BDE8-815854A63D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8800CFF8-0DC6-4B31-BDE8-815854A63D19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C284AA9D-D6A3-4B87-9714-F1E6F9183A80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C284AA9D-D6A3-4B87-9714-F1E6F9183A80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C284AA9D-D6A3-4B87-9714-F1E6F9183A80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C284AA9D-D6A3-4B87-9714-F1E6F9183A80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
