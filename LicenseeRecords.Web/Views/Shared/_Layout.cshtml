@@ -1,4 +1,22 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor;
+
+@{
+    HttpRequest? request = HttpContextAccessor.HttpContext.Request;
+
+    string directory = "";
+
+    if (request != null)
+    {
+        string[] segments = request.Path.Value.Split('/');
+        directory = "/" + (segments.Length > 1 ? segments[1] : "");
+    }else
+    {
+        directory = "/";
+    }
+    string IsActive(string path) => directory == path ? "govuk-service-navigation__item--active" : "";
+}
+
+<!DOCTYPE html>
 <html lang="en" class="govuk-template">
 
 <head>
@@ -43,10 +61,39 @@
                     Licensee Records
                 </a>                
             </div>
-
         </div>
-
     </header>
+
+    <!-- service navigation -->
+    <div class="govuk-service-navigation"
+         data-module="govuk-service-navigation">
+        <div class="govuk-width-container">
+            <div class="govuk-service-navigation__container">
+                <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
+                    <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle" aria-controls="navigation" hidden>
+                        Menu
+                    </button>
+                    <ul class="govuk-service-navigation__list" id="navigation">
+                        <li class="govuk-service-navigation__item @(IsActive("/")) @(IsActive("/home"))">
+                            <a class="govuk-service-navigation__link" href="/">
+                                Overview
+                            </a>
+                        </li>
+                        <li class="govuk-service-navigation__item @(IsActive("/accounts"))">
+                            <a class="govuk-service-navigation__link" href="/accounts" aria-current="true">
+                                Account Management
+                            </a>
+                        </li>
+                        <li class="govuk-service-navigation__item @(IsActive("/products"))">
+                            <a class="govuk-service-navigation__link" href="/products">
+                                Product Management
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
 
     <!-- main -->
     <div class="govuk-width-container">
