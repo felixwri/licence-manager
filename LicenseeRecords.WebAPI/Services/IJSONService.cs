@@ -2,8 +2,12 @@
 {
     public interface IJSONService
     {
-        public T Read<T>(string path);
+        public T ReadFile<T>(string path);
 
-        public void Write<T>(string path, T content);
+        public void WriteToFile<T>(string path, T content);
+
+        public T ReadString<T>(string content);
+
+        public string WriteToString<T>(T content);
     }
 }

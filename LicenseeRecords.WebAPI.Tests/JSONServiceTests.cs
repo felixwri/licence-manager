@@ -22,18 +22,14 @@ namespace LicenseeRecords.WebAPI.Tests
         [Fact]
         public void WriteJSONToFile()
         {
-            // Arrange
             var path = "Test_JSONWrite.json";
             var content = new { ProductName = "Betting", ProductId = 30 };
 
-            // Act
-            _jsonService.Write(path, content);
+            _jsonService.WriteToFile(path, content);
 
-            // Assert
             var result = File.ReadAllText(path);
             Assert.Equal("{\"ProductName\":\"Betting\",\"ProductId\":30}", result);
 
-            // Cleanup
             File.Delete(path);
         }
 
@@ -42,12 +38,10 @@ namespace LicenseeRecords.WebAPI.Tests
         {
             var path = "Test_JSONRead.json";
             var content = new MockObject { ProductName = "Betting", ProductId = 25 };
-            _jsonService.Write(path, content);
+            _jsonService.WriteToFile(path, content);
 
-            // Act
-            var result = _jsonService.Read<MockObject>(path);
+            var result = _jsonService.ReadFile<MockObject>(path);
 
-            // Assert
             Assert.Equal(result.ProductName, content.ProductName);
             Assert.Equal(result.ProductId, content.ProductId);
 
@@ -57,16 +51,14 @@ namespace LicenseeRecords.WebAPI.Tests
         [Fact]
         public void DeserializeAllAcounts()
         {
-
             string filePath = Path.Combine(Environment.CurrentDirectory, "ExampleData", "TestAccounts.json");
 
-            List<Account> accounts = _jsonService.Read<List<Account>>(filePath);
+            List<Account> accounts = _jsonService.ReadFile<List<Account>>(filePath);
 
             Assert.NotEmpty(accounts);
 
             Account account = accounts[0];
 
-            // Assert
             Assert.Equal(1, account.AccountId);
             Assert.Equal("Online Bingo Limited", account.AccountName);
             Assert.Equal(Enums.Status.Active, account.AccountStatus);

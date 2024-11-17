@@ -8,6 +8,6 @@ namespace LicenseeRecords.WebAPI.Models
         public int ProductId { get; set; }
 
         [Required]
-        public string ProductName { get; set; }
+        public required string ProductName { get; set; }
     }
 }

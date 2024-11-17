@@ -1,4 +1,5 @@
 using LicenseeRecords.WebAPI.Services;
+using LicenseeRecords.WebAPI.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+DataInitializer.InitializeData();
 
 app.UseHttpsRedirection();
 

@@ -14,18 +14,14 @@ namespace LicenseeRecords.WebAPI.Tests
         [Fact]
         public void WriteToFile()
         {
-            // Arrange
             var path = "Test_FileWrite.txt";
             var content = "Hello, World!";
 
-            // Act
             _fileService.Write(path, content);
 
-            // Assert
             var result = File.ReadAllText(path);
             Assert.Equal(content, result);
 
-            // Cleanup
             File.Delete(path);
         }
 
@@ -33,7 +29,6 @@ namespace LicenseeRecords.WebAPI.Tests
         public void ThrowsIfMissing()
         {
             var path = "Test_MissingFilePath.txt";
-            // Assert
             Assert.Throws<FileNotFoundException>(() => _fileService.Read(path));
         }
 
@@ -44,10 +39,8 @@ namespace LicenseeRecords.WebAPI.Tests
             var content = "Example content";
             _fileService.Write(path, content);
 
-            // Act
             var result = _fileService.Read(path);
 
-            // Assert
             Assert.Equal(result, content);
 
             File.Delete(path);

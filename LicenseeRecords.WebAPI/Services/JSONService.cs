@@ -6,7 +6,7 @@ namespace LicenseeRecords.WebAPI.Services
     {
         private readonly IFileService _fileService = fileService;
 
-        public T Read<T>(string path)
+        public T ReadFile<T>(string path)
         {
             string content = _fileService.Read(path);
             T? result = JsonSerializer.Deserialize<T>(content);
@@ -19,10 +19,28 @@ namespace LicenseeRecords.WebAPI.Services
             return result;
         }
 
-        public void Write<T>(string path, T content)
+        public void WriteToFile<T>(string path, T content)
         {
             string json = JsonSerializer.Serialize(content);
             _fileService.Write(path, json);
+        }
+
+        public T ReadString<T>(string content)
+        {
+            T? result = JsonSerializer.Deserialize<T>(content);
+
+            if (result == null)
+            {
+                throw new Exception("Deserialization failed.");
+            }
+
+            return result;
+        }
+
+        public string WriteToString<T>(T content)
+        {
+            string jsonString = JsonSerializer.Serialize(content);
+            return jsonString;
         }
     }
 }

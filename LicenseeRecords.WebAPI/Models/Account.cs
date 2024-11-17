@@ -5,7 +5,6 @@ namespace LicenseeRecords.WebAPI.Models
 {
     public class Account
     {
-        [Required]
         public int AccountId { get; set; }
 
         [Required]
