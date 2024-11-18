@@ -1,0 +1,196 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@model LicenseeRecords.WebAPI.Models.Account
+@{
+    ViewData["Title"] = "Account Editor";
+
+    bool AccountActive = Model.AccountStatus == LicenseeRecords.WebAPI.Enums.Status.Active;
+
+    var ActiveLicences = Model.ProductLicence.Where(x => x.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active).ToList();
+
+    var PreviousLicences = Model.ProductLicence.Where(x => x.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Inactive).ToList();
+}
+<a href="/accounts" class="govuk-back-link">Back</a>
+
+<h1 class="govuk-heading-l">@Model.AccountName</h1>
+
+<div class="govuk-width-container">
+    <form onsubmit="handleFormSubmit(event)" method="post" action="/accounts/edit">
+        <button type="submit" class="govuk-button" data-module="govuk-button">
+            Save
+        </button>
+
+        <input name="AccountId" type="hidden" value="@Model.AccountId">
+        
+        <div class="govuk-form-group">
+            <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label" for="AcountName">
+                    Account name
+                </label>
+            </h1>
+            <input class="govuk-input" name="AcountName" type="text" value="@Model.AccountName">
+        </div>
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="AccountStatus">
+                Account status
+            </label>
+            <select class="govuk-select" name="AccountStatus">
+                @if (AccountActive)
+                {
+                    <option value="Active" selected>Active</option>
+                    <option value="Inactive">Inactive</option>
+                }
+                else
+                {
+                    <option value="Active">Active</option>
+                    <option value="Inactive" selected>Inactive</option>
+                }")
+            </select>
+        </div>
+
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-fieldset__heading">
+                    Active Licences
+                </h1>
+            </legend>
+
+            @foreach(var ActiveLicence in ActiveLicences) {
+                <input name="LicenceId" type="hidden" value="@ActiveLicence?.LicenceId">
+                <div class="licence-break"></div>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <div class="govuk-form-group">
+                                <label class="govuk-label" for="ProductName">
+                                Product
+                            </label>
+                            <select class="govuk-select" name="ProductName">
+                                <option value="@ActiveLicence.Product.ProductName" selected>@ActiveLicence.Product.ProductName</option>
+                                <option value="Other">Other</option>
+
+                            </select>
+                        </div>
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="LicenseFromDate">
+                                Starting Date
+                            </label>
+                            <input class="govuk-input" name="LicenseFromDate" type="date" value="@ActiveLicence?.LicenceFromDate.ToString("yyyy-MM-dd")">
+                        </div>
+                    </div>
+
+                    <div class="govuk-grid-column-one-third">
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="LicenceStatus">
+                                Licence Status
+                            </label>
+                            <select class="govuk-select" name="LicenceStatus">
+                                @if (ActiveLicence.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active)
+                                {
+                                    <option value="Active" selected>Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                }
+                                else
+                                {
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive" selected>Inactive</option>
+                                }")
+                            </select>
+                        </div>
+
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="LicenceToDate">
+                                Closing Date
+                            </label>
+                            <input class="govuk-input" name="LicenceToDate" type="date">
+                        </div>
+                    </div>
+                </div>
+            }  
+        </fieldset>
+
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-fieldset__heading">
+                    Previously Active Licences
+                </h1>
+            </legend>
+
+            @if(PreviousLicences.Count == 0)
+            {
+                <p class="govuk-body">No previously active licences</p>
+            }
+
+            @foreach (var PreviousLicence in PreviousLicences)
+            {
+                <input name="LicenceId" type="hidden" value="@PreviousLicence?.LicenceId">
+                <div class="licence-break"></div>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="ProductName">
+                                Product
+                            </label>
+                            <select class="govuk-select" name="ProductName">
+                                <option value="@PreviousLicence.Product.ProductName" selected>@PreviousLicence.Product.ProductName</option>
+                                <option value="Other">Other</option>
+
+                            </select>
+                        </div>
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="LicenceFromDate">
+                                Starting Date
+                            </label>
+                            <input class="govuk-input" name="LicenceFromDate" type="date" value="@PreviousLicence?.LicenceFromDate.ToString("yyyy-MM-dd")">
+                        </div>
+                    </div>
+
+                    <div class="govuk-grid-column-one-third">
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="LicenceStatus">
+                                Licence Status
+                            </label>
+                            <select class="govuk-select" name="LicenceStatus">
+                                @if (PreviousLicence.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active)
+                                {
+                                    <option value="Active" selected>Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                }
+                                else
+                                {
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive" selected>Inactive</option>
+                                }")
+                            </select>
+                        </div>
+
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="LicenceToDate">
+                                Date Closed
+                            </label>
+                            <input class="govuk-input" name="LicenceToDate" type="date" value="@PreviousLicence?.LicenceToDate?.ToString("yyyy-MM-dd")">
+                        </div>
+                    </div>
+                </div>
+            }
+        </fieldset>
+    </form>
+</div>
+
+<script>
+    function handleFormSubmit(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Extract form data
+        const form = event.target;
+        const formData = new FormData(form);
+
+        // Log form data to the console (for demonstration purposes)
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+        // Perform custom actions (e.g., validation, AJAX request, etc.)
+
+        // Optionally, submit the form programmatically
+        // form.submit();
+    }
+</script>

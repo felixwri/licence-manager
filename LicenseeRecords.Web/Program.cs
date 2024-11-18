@@ -1,9 +1,15 @@
+using LicenseeRecords.Web.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddHttpClient<AccountsService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5267/api/");
+});
 
 var app = builder.Build();
 

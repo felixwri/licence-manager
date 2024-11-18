@@ -1,9 +1,37 @@
-﻿@{
+﻿@model IEnumerable<LicenseeRecords.WebAPI.Models.Account>
+@{
     ViewData["Title"] = "Account Managment";
 }
 
 <h1 class="govuk-heading-xl">Account Management</h1>
 
-<div class="govuk-grid-row">
-
+<div class="govuk-width-container">
+    <table class="govuk-table">
+        <thead>
+            <tr>
+                <th class="govuk-table__header">ID</th>
+                <th class="govuk-table__header">Name</th>
+                <th class="govuk-table__header">Status</th>
+                <th class="govuk-table__header"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var account in Model)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@account.AccountId</td>
+                    <td class="govuk-table__cell">@account.AccountName</td>
+                    <td class="govuk-table__cell">@account.AccountStatus</td>
+                    <td class="govuk-table__cell">
+                        <a asp-action="Edit" asp-route-id="@account.AccountId" class="govuk-button no-margin govuk-button--secondary" data-module="govuk-button">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="govuk-button" data-module="govuk-button">
+        Add Account
+    </button>
 </div>

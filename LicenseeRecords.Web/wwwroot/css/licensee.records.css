@@ -47,8 +47,31 @@ body {
     display: inline-block;
 }
 
+.govuk-service-navigation__item {
+    border-color: #11554C;
+}
+
+.govuk-service-navigation__link:not(:hover):not(:focus) {
+    color: #11554C;
+}
+
+.govuk-service-navigation__link:hover {
+    color: #11554C;
+}
+
 .govuk-tag {
     background-color: #11554C;
     color: #FFFFFF;
+}
+
+.no-margin {
+    margin: 0;
+}
+
+.licence-break {
+    margin-top: 1em;
+    height: 5px;
+    background-color: #ddd;
+    margin-bottom: 1em;
 }
 /* ----------------------------------------- */

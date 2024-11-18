@@ -13,7 +13,7 @@
     {
         directory = "/";
     }
-    string IsActive(string path) => directory == path ? "govuk-service-navigation__item--active" : "";
+    string IsActive(string path) => directory.ToLower() == path.ToLower() ? "govuk-service-navigation__item--active" : "";
 }
 
 <!DOCTYPE html>
