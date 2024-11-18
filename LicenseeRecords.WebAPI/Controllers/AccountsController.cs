@@ -57,6 +57,23 @@ namespace LicenseeRecords.WebAPI.Controllers
             return Ok(accounts);
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetOne(int id)
+        {
+            _logger.LogInformation("Getting Account With Id: " + id);
+
+            List<Account> accounts = this.GetAccounts();
+
+            Account? account = accounts.Find(a => a.AccountId == id);
+
+            if (account == null)
+            {
+                return NotFound("No accounts found.");
+            }
+
+            return Ok(account);
+        }
+
         [HttpPost]
         public IActionResult Post([FromBody] Account newAccount)
         {

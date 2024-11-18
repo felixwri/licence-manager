@@ -6,13 +6,13 @@ namespace LicenseeRecords.WebAPI.Models
     public class Liscense
     {
         [Required]
-        public int LiscenseId { get; set; }
+        public int LicenceId { get; set; }
         [Required]
-        public Status LiscenseStatus { get; set; }
+        public Status LicenceStatus { get; set; }
         [Required]
-        public DateTime LiscenseFromDate { get; set; }
+        public DateTime LicenceFromDate { get; set; }
         [Required]
-        public DateTime? LiscenseToDate { get; set; }
+        public DateTime? LicenceToDate { get; set; }
         [Required]
         public required Product Product { get; set; }
     }
