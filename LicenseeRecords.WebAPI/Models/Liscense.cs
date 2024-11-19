@@ -11,8 +11,8 @@ namespace LicenseeRecords.WebAPI.Models
         public Status LicenceStatus { get; set; }
         [Required]
         public DateTime LicenceFromDate { get; set; }
-        [Required]
-        public DateTime? LicenceToDate { get; set; }
+
+        public DateTime? LicenceToDate { get; set; } = null;
         [Required]
         public required Product Product { get; set; }
     }

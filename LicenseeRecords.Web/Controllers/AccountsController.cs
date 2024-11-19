@@ -2,6 +2,7 @@
 using LicenseeRecords.WebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
+using System.Text.Json;
 
 namespace LicenseeRecords.Web.Controllers
 {
@@ -30,20 +31,14 @@ namespace LicenseeRecords.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Account model)
+        public async Task<IActionResult> Edit(Account account)
         {
-            Console.WriteLine("Edit");
-            Console.WriteLine(model.ToJson());
-
             if (ModelState.IsValid)
             {
-          
-                // Save the updated account details
-                // ...
+                await _accountsService.UpdateAccountAsync(account.AccountId, account);
 
-                //return RedirectToAction("Index");
+                return RedirectToAction("Index");
             }
-
             // If the model state is invalid, return the view with the model to show validation errors
             return RedirectToAction("Index");
         }
