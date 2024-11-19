@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LicenseeRecords.WebAPI.Models
 {
-    public class Liscense
+    public class Licence
     {
         [Required]
         public int LicenceId { get; set; }

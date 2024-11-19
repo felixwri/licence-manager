@@ -69,9 +69,32 @@ body {
 }
 
 .licence-break {
-    margin-top: 1em;
+    margin-top: 1rem;
     height: 5px;
-    background-color: #ddd;
-    margin-bottom: 1em;
+/*    background-color: #ddd;*/
+    margin-bottom: 1rem;
+}
+
+.licence-group {
+    border-left: 5px solid #aaa;
+}
+
+.licence-group-new {
+    border-left: 5px solid green;
+}
+
+.inline-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.static-button {
+    width: unset;
+}
+
+.grey-out {
+    color: #777;
 }
 /* ----------------------------------------- */

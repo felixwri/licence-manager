@@ -53,5 +53,18 @@ namespace LicenseeRecords.Web.Services
 
             return;
         }
+
+        public async Task AddAccountAsync(Account account)
+        {
+            string URL = _client.BaseAddress + "accounts/";
+
+            var httpContent = new StringContent(JsonSerializer.Serialize(account), Encoding.UTF8, "application/json");
+
+            var response = await _client.PostAsync(URL, httpContent);
+
+            var status = response.EnsureSuccessStatusCode();
+
+            return;
+        }
     }
 }

@@ -13,24 +13,30 @@
 }
 <a href="/accounts" class="govuk-back-link">Back</a>
 
-<h1 class="govuk-heading-l">@Model.AccountName</h1>
+
 
 <div class="govuk-width-container">
     <form method="post" action="/accounts/edit">
-        <button type="submit" class="govuk-button" data-module="govuk-button">
-            Save
-        </button>
+        <div class="inline-title">
+        <h1 class="govuk-heading-l">@Model.AccountName</h1>
+        <button type="submit" class="govuk-button static-button govuk-button--secondary" data-module="govuk-button">
+            Update all
+            </button>
+        </div>
+
+        <!-- Account Details -->
 
         <input name="AccountId" type="hidden" value="@Model.AccountId">
-        
+
         <div class="govuk-form-group">
             <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label" for="AccountName">
+                <label class="govuk-label" for="AccountName">
                     Account name
                 </label>
             </h1>
             <input class="govuk-input" name="AccountName" type="text" value="@Model.AccountName">
         </div>
+            
         <div class="govuk-form-group">
             <label class="govuk-label" for="AccountStatus">
                 Account status
@@ -48,77 +54,87 @@
                 }")
             </select>
         </div>
+ 
+        <div class="licence-break"></div>
+
+        <!-- Licence Sections -->
 
         <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l inline-title">
                 <h1 class="govuk-fieldset__heading">
                     Active Licences
                 </h1>
+                <button type="button" onclick="generateLicence()" class="govuk-button static-button no-margin" data-module="govuk-button">
+                    Add Licence
+                </button>
             </legend>
 
             @if (ActiveLicences.Count == 0)
             {
                 <p class="govuk-body">No active licences</p>
             }
+            <div id="active-licence-container">
+                @foreach (var ActiveLicence in ActiveLicences) {
+                    <input name="ProductLicence[@Index].LicenceId" type="hidden" value="@ActiveLicence?.LicenceId">
+                    <input name="ProductLicence[@Index].Product.ProductId" type="hidden" value="@ActiveLicence?.Product.ProductId">
+                    <div class="licence-break"></div>
+                    <div class="govuk-grid-row licence-group">
+                        <div class="govuk-grid-column-two-thirds">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ProductLicence[@Index].Product.ProductName">
+                                    Product
+                                </label>
+                                <select class="govuk-select" name="ProductLicence[@Index].Product.ProductName">
+                                    <option value="@ActiveLicence.Product.ProductName" selected>@ActiveLicence.Product.ProductName</option>
+                                    <option value="Other">Other</option>
 
-            @foreach (var ActiveLicence in ActiveLicences) {
-                <input name="ProductLicence[@Index].LicenceId" type="hidden" value="@ActiveLicence?.LicenceId">
-                <input name="ProductLicence[@Index].Product.ProductId" type="hidden" value="@ActiveLicence?.Product.ProductId">
-                <div class="licence-break"></div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-two-thirds">
-                        <div class="govuk-form-group">
-                            <label class="govuk-label" for="ProductLicence[@Index].Product.ProductName">
-                                Product
-                            </label>
-                            <select class="govuk-select" name="ProductLicence[@Index].Product.ProductName">
-                                <option value="@ActiveLicence.Product.ProductName" selected>@ActiveLicence.Product.ProductName</option>
-                                <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ProductLicence[@Index].LicenceFromDate">
+                                    Starting Date
+                                </label>
+                                <input class="govuk-input" name="ProductLicence[@Index].LicenceFromDate" type="datetime-local" value="@ActiveLicence?.LicenceFromDate.ToString("yyyy-MM-ddThh:mm")">
+                            </div>
+                        </div>
 
-                            </select>
+                        <div class="govuk-grid-column-one-third">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ProductLicence[@Index].LicenceStatus">
+                                    Licence Status
+                                </label>
+                                <select class="govuk-select" name="ProductLicence[@Index].LicenceStatus">
+                                    @if (ActiveLicence.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active)
+                                    {
+                                        <option value="Active" selected>Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive" selected>Inactive</option>
+                                    }")
+                                </select>
+                            </div>
+
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ProductLicence[@Index].LicenceToDate">
+                                    Closing Date
+                                </label>
+                                <input class="govuk-input" name="ProductLicence[@Index].LicenceToDate" type="date">
+                            </div>
                         </div>
-                        <div class="govuk-form-group">
-                            <label class="govuk-label" for="ProductLicence[@Index].LicenceFromDate">
-                                Starting Date
-                            </label>
-                            <input class="govuk-input" name="ProductLicence[@Index].LicenceFromDate" type="datetime-local" value="@ActiveLicence?.LicenceFromDate.ToString("yyyy-MM-ddThh:mm")">
-                        </div>
+                        @{Index++;}
                     </div>
-
-                    <div class="govuk-grid-column-one-third">
-                        <div class="govuk-form-group">
-                            <label class="govuk-label" for="ProductLicence[@Index].LicenceStatus">
-                                Licence Status
-                            </label>
-                            <select class="govuk-select" name="ProductLicence[@Index].LicenceStatus">
-                                @if (ActiveLicence.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active)
-                                {
-                                    <option value="Active" selected>Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                }
-                                else
-                                {
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive" selected>Inactive</option>
-                                }")
-                            </select>
-                        </div>
-
-                        <div class="govuk-form-group">
-                            <label class="govuk-label" for="ProductLicence[@Index].LicenceToDate">
-                                Closing Date
-                            </label>
-                            <input class="govuk-input" name="ProductLicence[@Index].LicenceToDate" type="date">
-                        </div>
-                    </div>
-                    @{Index++;}
-                </div>
-            }  
+                }  
+            </div>
         </fieldset>
+
+        <div class="licence-break"></div>
 
         <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                <h1 class="govuk-fieldset__heading">
+                <h1 class="govuk-fieldset__heading grey-out">
                     Previously Active Licences
                 </h1>
             </legend>
@@ -127,61 +143,123 @@
             {
                 <p class="govuk-body">No previously active licences</p>
             }
+            <div id="previous-licence-container">
+                @foreach (var PreviousLicence in PreviousLicences)
+                {
+                    <input name="ProductLicence[@Index].LicenceId" type="hidden" value="@PreviousLicence?.LicenceId">
+                    <input name="ProductLicence[@Index].Product.ProductId" type="hidden" value="@PreviousLicence?.Product.ProductId">
+                    <div class="licence-break"></div>
+                    <div class="govuk-grid-row licence-group">
+                        <div class="govuk-grid-column-two-thirds">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ProductLicence[@Index].Product.ProductName">
+                                    Product
+                                </label>
+                                <select class="govuk-select" name="ProductLicence[@Index].Product.ProductName">
+                                    <option value="@PreviousLicence.Product.ProductName" selected>@PreviousLicence.Product.ProductName</option>
+                                    <option value="Other">Other</option>
 
-            @foreach (var PreviousLicence in PreviousLicences)
-            {
-                <input name="ProductLicence[@Index].LicenceId" type="hidden" value="@PreviousLicence?.LicenceId">
-                <input name="ProductLicence[@Index].Product.ProductId" type="hidden" value="@PreviousLicence?.Product.ProductId">
-                <div class="licence-break"></div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-two-thirds">
-                        <div class="govuk-form-group">
-                            <label class="govuk-label" for="ProductLicence[@Index].Product.ProductName">
-                                Product
-                            </label>
-                            <select class="govuk-select" name="ProductLicence[@Index].Product.ProductNamed">
-                                <option value="@PreviousLicence.Product.ProductName" selected>@PreviousLicence.Product.ProductName</option>
-                                <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ProductLicence[@Index].LicenceFromDate">
+                                    Starting Date
+                                </label>
+                                <input class="govuk-input" name="ProductLicence[@Index].LicenceFromDate" type="datetime-local" value="@PreviousLicence?.LicenceFromDate.ToString("yyyy-MM-ddThh:mm")">
+                            </div>
+                        </div>
 
-                            </select>
+                        <div class="govuk-grid-column-one-third">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ProductLicence[@Index].LicenceStatus">
+                                    Licence Status
+                                </label>
+                                <select class="govuk-select" name="ProductLicence[@Index].LicenceStatus">
+                                    @if (PreviousLicence.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active)
+                                    {
+                                        <option value="Active" selected>Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive" selected>Inactive</option>
+                                    }")
+                                </select>
+                            </div>
+
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ProductLicence[@Index].LicenceToDate">
+                                    Date Closed
+                                </label>
+                                <input class="govuk-input" name="ProductLicence[@Index].LicenceToDate" type="datetime-local" value="@PreviousLicence?.LicenceToDate?.ToString("yyyy-MM-ddThh:mm")">
+                            </div>
                         </div>
-                        <div class="govuk-form-group">
-                            <label class="govuk-label" for="ProductLicence[@Index].LicenceFromDate">
-                                Starting Date
-                            </label>
-                            <input class="govuk-input" name="ProductLicence[@Index].LicenceFromDate" type="datetime-local" value="@PreviousLicence?.LicenceFromDate.ToString("yyyy-MM-ddThh:mm")">
-                        </div>
+                        @{Index++;}
                     </div>
-
-                    <div class="govuk-grid-column-one-third">
-                        <div class="govuk-form-group">
-                            <label class="govuk-label" for="ProductLicence[@Index].LicenceStatus">
-                                Licence Status
-                            </label>
-                            <select class="govuk-select" name="ProductLicence[@Index].LicenceStatus">
-                                @if (PreviousLicence.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active)
-                                {
-                                    <option value="Active" selected>Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                }
-                                else
-                                {
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive" selected>Inactive</option>
-                                }")
-                            </select>
-                        </div>
-
-                        <div class="govuk-form-group">
-                            <label class="govuk-label" for="ProductLicence[@Index].LicenceToDate">
-                                Date Closed
-                            </label>
-                            <input class="govuk-input" name="ProductLicence[@Index].LicenceToDate" type="datetime-local" value="@PreviousLicence?.LicenceToDate?.ToString("yyyy-MM-ddThh:mm")">
-                        </div>
-                    </div>
-                    @{Index++;}
-                </div>
-            }
+                }
+            </div>
         </fieldset>
     </form>
 </div>
+
+<div id="example-licence" style="display: none">
+    <input name="ProductLicence[-1].LicenceId" type="hidden" value="0">
+    <input name="ProductLicence[-1].Product.ProductId" type="hidden" value="0">
+    <div class="licence-break"></div>
+    <div class="govuk-grid-row licence-group-new">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="ProductLicence[-1].Product.ProductName">
+                    Product
+                </label>
+                <select class="govuk-select" name="ProductLicence[-1].Product.ProductName">
+                    <option value="Bingo" selected>Bingo</option>
+                    <option value="Other">Other</option>
+
+                </select>
+            </div>
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="ProductLicence[-1].LicenceFromDate">
+                    Starting Date
+                </label>
+                <input class="govuk-input" name="ProductLicence[-1].LicenceFromDate" type="datetime-local" value="">
+            </div>
+        </div>
+
+        <div class="govuk-grid-column-one-third">
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="ProductLicence[-1].LicenceStatus">
+                    Licence Status
+                </label>
+                <select class="govuk-select" name="ProductLicence[-1].LicenceStatus">
+                    <option value="Active">Active</option>
+                    <option value="Inactive" selected>Inactive</option>
+                </select>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="ProductLicence[-1].LicenceToDate">
+                    Date Closed
+                </label>
+                <input class="govuk-input" name="ProductLicence[-1].LicenceToDate" type="datetime-local" value="">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let index = parseInt(@Index);
+
+    function generateLicence() {
+        const licence = document.getElementById("example-licence").innerHTML;
+
+        const container = document.getElementById("active-licence-container");
+
+        const newLicence = licence.replace(/-1/g, index);
+
+        container.innerHTML += newLicence;
+        
+        index++;
+    }
+</script>

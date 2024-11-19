@@ -1,6 +1,7 @@
 ﻿using LicenseeRecords.WebAPI.Models;
 using LicenseeRecords.WebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Principal;
 
 namespace LicenseeRecords.WebAPI.Controllers
 {
@@ -19,22 +20,17 @@ namespace LicenseeRecords.WebAPI.Controllers
         }
 
         private List<Account> GetAccounts() {
-            _logger.LogInformation("Getting accounts from " + _filePath);
-
             List<Account> accounts = _JSONService.ReadFile<List<Account>>(_filePath);
 
-            if (accounts == null)
-            {
-                return [];
-            }
-
+            if (accounts == null) return [];
+            
             return accounts;
         }
 
-        private int generateId(List<Account> accounts)
+        private int GenerateId<T>(List<T> items, Func<T, int> idSelector)
         {
             int newId = 1;
-            var existingIds = accounts.Select(a => a.AccountId).ToHashSet();
+            var existingIds = items.Select(idSelector).ToHashSet();
             while (existingIds.Contains(newId))
             {
                 newId++;
@@ -47,7 +43,7 @@ namespace LicenseeRecords.WebAPI.Controllers
         {
             _logger.LogInformation("Getting Account Data");
 
-            List<Account> accounts = this.GetAccounts();
+            List<Account> accounts = GetAccounts();
 
             if (accounts.Count == 0)
             {
@@ -62,7 +58,7 @@ namespace LicenseeRecords.WebAPI.Controllers
         {
             _logger.LogInformation("Getting Account With Id: " + id);
 
-            List<Account> accounts = this.GetAccounts();
+            List<Account> accounts = GetAccounts();
 
             Account? account = accounts.Find(a => a.AccountId == id);
 
@@ -77,11 +73,18 @@ namespace LicenseeRecords.WebAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Account newAccount)
         {
-            List<Account> accounts = this.GetAccounts();
+            List<Account> accounts = GetAccounts();
 
             _logger.LogInformation("Adding account: " + newAccount.AccountName);
 
-            newAccount.AccountId = generateId(accounts);
+            // Create a new account id for the account itself
+            newAccount.AccountId = GenerateId(accounts, account => account.AccountId);
+
+            // Iterate over all new licences and give them an id
+            foreach (Licence licence in newAccount.ProductLicence)
+            {
+                licence.LicenceId = GenerateId(newAccount.ProductLicence, licence => licence.LicenceId);
+            }
 
             accounts.Add(newAccount);
 
@@ -93,7 +96,7 @@ namespace LicenseeRecords.WebAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] Account updatedAccount)
         {
-            List<Account> accounts = this.GetAccounts();
+            List<Account> accounts = GetAccounts();
 
             _logger.LogInformation("Updating account: " + updatedAccount.AccountName);
 
@@ -103,6 +106,15 @@ namespace LicenseeRecords.WebAPI.Controllers
             {
                 return NotFound("Account not found");
             }
+            // Iterate over all new licences and give them an id
+            foreach (Licence licence in updatedAccount.ProductLicence)
+            {
+                if (licence.LicenceId == 0)
+                {
+                    licence.LicenceId = GenerateId(updatedAccount.ProductLicence, licence => licence.LicenceId);
+                }
+            }
+
             updatedAccount.AccountId = id;
             accounts[index] = updatedAccount;
 
@@ -114,7 +126,7 @@ namespace LicenseeRecords.WebAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            List<Account> accounts = this.GetAccounts();
+            List<Account> accounts = GetAccounts();
 
             int index = accounts.FindIndex(a => a.AccountId == id);
 

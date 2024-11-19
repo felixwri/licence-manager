@@ -14,7 +14,7 @@ namespace LicenseeRecords.WebAPI.Models
         public Status AccountStatus { get; set; }
 
         [Required]
-        public List<Liscense> ProductLicence { get; set; } = [];
+        public List<Licence> ProductLicence { get; set; } = [];
 
     }
 }

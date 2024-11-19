@@ -1,8 +1,7 @@
 ﻿using LicenseeRecords.Web.Services;
+using LicenseeRecords.WebAPI.Enums;
 using LicenseeRecords.WebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol;
-using System.Text.Json;
 
 namespace LicenseeRecords.Web.Controllers
 {
@@ -20,6 +19,7 @@ namespace LicenseeRecords.Web.Controllers
             return View(accounts);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var account = await _accountsService.GetAccountByIdAsync(id);
@@ -37,10 +37,46 @@ namespace LicenseeRecords.Web.Controllers
             {
                 await _accountsService.UpdateAccountAsync(account.AccountId, account);
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Success");
+            }
+            return RedirectToAction("Failed");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            Account account = new()
+            {
+                AccountId = 0,
+                AccountName = "New Account",
+                AccountStatus = Status.Active,
+                ProductLicence = []
+            };
+
+            return View(account);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Account account)
+        {
+            if (ModelState.IsValid)
+            {
+                await _accountsService.AddAccountAsync(account);
+
+                return RedirectToAction("Success");
             }
             // If the model state is invalid, return the view with the model to show validation errors
-            return RedirectToAction("Index");
+            return RedirectToAction("Failed");
+        }
+
+        public IActionResult Success()
+        {
+            return View();
+        }
+
+        public IActionResult Error()
+        {
+            return View();
         }
     }
 }
