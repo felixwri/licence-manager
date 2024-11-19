@@ -53,7 +53,7 @@ namespace LicenseeRecords.Web.Controllers
                 ProductLicence = []
             };
 
-            return View(account);
+            return View("Edit", account);
         }
 
         [HttpPost]

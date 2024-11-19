@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Account Editor";
 
+    bool IsNewAccount = Model.AccountId == 0;
+    string PostAction = IsNewAccount ? "Create" : "Edit";
+
     bool AccountActive = Model.AccountStatus == LicenseeRecords.WebAPI.Enums.Status.Active;
 
     var ActiveLicences = Model.ProductLicence.Where(x => x.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active).ToList();
@@ -14,13 +17,24 @@
 <a href="/accounts" class="govuk-back-link">Back</a>
 
 
+@if (IsNewAccount)
+{
+    <h1 class="govuk-heading-s new-account-banner">You are creating a new account</h1>
+}
+
 
 <div class="govuk-width-container">
-    <form method="post" action="/accounts/edit">
+    <form onsubmit="formSubmission(event)" method="post" action="/accounts/@PostAction">
         <div class="inline-title">
         <h1 class="govuk-heading-l">@Model.AccountName</h1>
-        <button type="submit" class="govuk-button static-button govuk-button--secondary" data-module="govuk-button">
-            Update all
+        <button id="form-submission" type="submit" class="govuk-button static-button govuk-button--secondary" data-module="govuk-button">
+                @if(IsNewAccount)
+                {
+                    <span>Create account</span>
+                } else
+                {
+                    <span>No changes to save</span>
+                }
             </button>
         </div>
 
@@ -203,6 +217,8 @@
     </form>
 </div>
 
+<!-- Hidden licence HTML example for creating new elements -->
+
 <div id="example-licence" style="display: none">
     <input name="ProductLicence[-1].LicenceId" type="hidden" value="0">
     <input name="ProductLicence[-1].Product.ProductId" type="hidden" value="0">
@@ -250,6 +266,7 @@
 
 <script>
     let index = parseInt(@Index);
+    const formType = "@(IsNewAccount ? "create" : "edit")";
 
     function generateLicence() {
         const licence = document.getElementById("example-licence").innerHTML;
@@ -261,5 +278,29 @@
         container.innerHTML += newLicence;
         
         index++;
+        updateSubmissionButton();
     }
+
+    function updateSubmissionButton() {
+        const button = document.querySelector('#form-submission');
+
+        if (formType == "create") { 
+            button.innerText = "Create account";
+        } else {
+            button.innerText = "Save changes";
+        }
+        
+        
+        button.classList.remove('govuk-button--secondary');
+    }
+
+    function formSubmission(event) {
+        if (!hasChanges) {
+            event.preventDefault();
+        }
+    }
+
+    document.querySelector('form').addEventListener('input', function (event) {
+        updateSubmissionButton();
+    });
 </script>

@@ -97,4 +97,11 @@ body {
 .grey-out {
     color: #777;
 }
+
+.new-account-banner {
+    background-color: #11554C;
+    color: #FFFFFF;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
 /* ----------------------------------------- */
