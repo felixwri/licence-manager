@@ -44,7 +44,7 @@ namespace LicenseeRecords.Web.Controllers
 
                 return RedirectToAction("Index");
             }
-            return RedirectToAction("Failed");
+            return RedirectToAction("Error");
         }
 
         [HttpPost]
@@ -56,7 +56,7 @@ namespace LicenseeRecords.Web.Controllers
 
                 return RedirectToAction("Index");
             }
-            return RedirectToAction("Failed");
+            return RedirectToAction("Error");
         }
 
         [HttpPost]
@@ -68,10 +68,10 @@ namespace LicenseeRecords.Web.Controllers
 
                 return RedirectToAction("Index");
             }
-            return RedirectToAction("Failed");
+            return RedirectToAction("Error");
         }
 
-        public IActionResult Failed()
+        public IActionResult Error()
         {
             return View();
         }

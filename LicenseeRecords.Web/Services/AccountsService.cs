@@ -9,6 +9,7 @@ namespace LicenseeRecords.Web.Services
     {
         private readonly HttpClient _client;
         private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        private readonly string _UrlTarget = "accounts";
         public AccountsService(HttpClient client)
         {
             this._client = client;
@@ -16,7 +17,7 @@ namespace LicenseeRecords.Web.Services
 
         public async Task<IEnumerable<Account>> GetAccountsAsync()
         {
-            var response = await _client.GetAsync(_client.BaseAddress + "accounts");
+            var response = await _client.GetAsync(_client.BaseAddress + _UrlTarget);
 
             response.EnsureSuccessStatusCode();
 
@@ -29,7 +30,7 @@ namespace LicenseeRecords.Web.Services
 
         public async Task<Account> GetAccountByIdAsync(int id)
         {
-            string URL = _client.BaseAddress + "accounts/" + id;
+            string URL = _client.BaseAddress + _UrlTarget + "/" + id;
             var response = await _client.GetAsync(URL);
 
             response.EnsureSuccessStatusCode();
@@ -43,7 +44,7 @@ namespace LicenseeRecords.Web.Services
 
         public async Task UpdateAccountAsync(int id, Account account)
         {
-            string URL = _client.BaseAddress + "accounts/" + id;
+            string URL = _client.BaseAddress + _UrlTarget + "/" + id;
 
             var httpContent = new StringContent(JsonSerializer.Serialize(account), Encoding.UTF8, "application/json");
 
@@ -56,11 +57,22 @@ namespace LicenseeRecords.Web.Services
 
         public async Task AddAccountAsync(Account account)
         {
-            string URL = _client.BaseAddress + "accounts/";
+            string URL = _client.BaseAddress + _UrlTarget + "/";
 
             var httpContent = new StringContent(JsonSerializer.Serialize(account), Encoding.UTF8, "application/json");
 
             var response = await _client.PostAsync(URL, httpContent);
+
+            response.EnsureSuccessStatusCode();
+
+            return;
+        }
+
+        public async Task DeleteAccountAsync(int id)
+        {
+            string URL = _client.BaseAddress + _UrlTarget + "/" + id;
+
+            var response = await _client.DeleteAsync(URL);
 
             response.EnsureSuccessStatusCode();
 

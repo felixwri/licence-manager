@@ -3,6 +3,10 @@
 @{
     ViewData["Title"] = "Account Editor";
 
+    var Products = ViewBag.Products as List<LicenseeRecords.WebAPI.Models.Product> ?? [];
+
+    Console.WriteLine(Products.Count());
+
     bool IsNewAccount = Model.AccountId == 0;
     string PostAction = IsNewAccount ? "Create" : "Edit";
 
@@ -24,7 +28,7 @@
 
 
 <div class="govuk-width-container">
-    <form onsubmit="formSubmission(event)" method="post" action="/accounts/@PostAction">
+    <form id="account-form" onsubmit="formSubmission(event)" method="post" action="/accounts/@PostAction">
         <div class="inline-title">
         <h1 class="govuk-heading-l">@Model.AccountName</h1>
         <button id="form-submission" type="submit" class="govuk-button static-button govuk-button--secondary" data-module="govuk-button">
@@ -91,17 +95,26 @@
                 @foreach (var ActiveLicence in ActiveLicences) {
                     <input name="ProductLicence[@Index].LicenceId" type="hidden" value="@ActiveLicence?.LicenceId">
                     <input name="ProductLicence[@Index].Product.ProductId" type="hidden" value="@ActiveLicence?.Product.ProductId">
+                    <input name="ProductLicence[@Index].Product.ProductName" type="hidden" value="@ActiveLicence?.Product.ProductName">
                     <div class="licence-break"></div>
                     <div class="govuk-grid-row licence-group">
                         <div class="govuk-grid-column-two-thirds">
-                            <div class="govuk-form-group">
-                                <label class="govuk-label" for="ProductLicence[@Index].Product.ProductName">
+                            <div class="govuk-form-group" disabled>
+                                <label class="govuk-label" for="product-selector">
                                     Product
                                 </label>
-                                <select class="govuk-select" name="ProductLicence[@Index].Product.ProductName">
-                                    <option value="@ActiveLicence.Product.ProductName" selected>@ActiveLicence.Product.ProductName</option>
-                                    <option value="Other">Other</option>
+                                <select oninput="updateProductId(this)" data-linkedId="ProductLicence[@Index].Product.ProductId" data-linkedName="ProductLicence[@Index].Product.ProductName" class="govuk-select" name="product-selector">
+                                    @foreach(var product in Products)
+                                    {
+                                        @if(product.ProductName == ActiveLicence.Product.ProductName)
+                                        {
+                                            <option value="@product.ProductId-@product.ProductName" selected>@product.ProductName</option>
+                                        } else                                         
+                                        {
+                                            <option value="@product.ProductId-@product.ProductName">@product.ProductName</option>
+                                        }
 
+                                    }
                                 </select>
                             </div>
                             <div class="govuk-form-group">
@@ -162,17 +175,27 @@
                 {
                     <input name="ProductLicence[@Index].LicenceId" type="hidden" value="@PreviousLicence?.LicenceId">
                     <input name="ProductLicence[@Index].Product.ProductId" type="hidden" value="@PreviousLicence?.Product.ProductId">
+                    <input name="ProductLicence[@Index].Product.ProductName" type="hidden" value="@PreviousLicence?.Product.ProductName">
                     <div class="licence-break"></div>
                     <div class="govuk-grid-row licence-group">
                         <div class="govuk-grid-column-two-thirds">
-                            <div class="govuk-form-group">
-                                <label class="govuk-label" for="ProductLicence[@Index].Product.ProductName">
+                            <div class="govuk-form-group" disabled>
+                                <label class="govuk-label" for="product-selector">
                                     Product
                                 </label>
-                                <select class="govuk-select" name="ProductLicence[@Index].Product.ProductName">
-                                    <option value="@PreviousLicence.Product.ProductName" selected>@PreviousLicence.Product.ProductName</option>
-                                    <option value="Other">Other</option>
+                                <select oninput="updateProductId(this)" data-linkedId="ProductLicence[@Index].Product.ProductId" data-linkedName="ProductLicence[@Index].Product.ProductName" class="govuk-select" name="product-selector">
+                                    @foreach (var product in Products)
+                                    {
+                                        @if (product.ProductName == PreviousLicence?.Product.ProductName)
+                                        {
+                                            <option value="@product.ProductId-@product.ProductName" selected>@product.ProductName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@product.ProductId-@product.ProductName">@product.ProductName</option>
+                                        }
 
+                                    }
                                 </select>
                             </div>
                             <div class="govuk-form-group">
@@ -198,7 +221,7 @@
                                     {
                                         <option value="Active">Active</option>
                                         <option value="Inactive" selected>Inactive</option>
-                                    }")
+                                    }
                                 </select>
                             </div>
 
@@ -214,6 +237,18 @@
                 }
             </div>
         </fieldset>
+
+        @if (!IsNewAccount)
+        {
+            <div class="licence-break"></div>
+
+            <div>
+                <h1 class="govuk-heading-m">Delete Account</h1>
+            <button onclick="deleteAccount(event)" type="submit" class="govuk-button static-button govuk-button--warning" data-module="govuk-button">
+                Permanently delete account
+            </button>
+        </div>
+        }
     </form>
 </div>
 
@@ -221,18 +256,35 @@
 
 <div id="example-licence" style="display: none">
     <input name="ProductLicence[-1].LicenceId" type="hidden" value="0">
-    <input name="ProductLicence[-1].Product.ProductId" type="hidden" value="0">
+    @if(Products.Count >= 1)
+    {
+        <input name="ProductLicence[-1].Product.ProductId" type="hidden" value="@Products[0].ProductId">
+        <input name="ProductLicence[-1].Product.ProductName" type="hidden" value="@Products[0].ProductName">
+    } else
+    {
+        <input name="ProductLicence[-1].Product.ProductId" type="hidden" value="0">
+        <input name="ProductLicence[-1].Product.ProductName" type="hidden" value="None">
+    }
     <div class="licence-break"></div>
     <div class="govuk-grid-row licence-group-new">
         <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-form-group">
-                <label class="govuk-label" for="ProductLicence[-1].Product.ProductName">
+            <div class="govuk-form-group" disabled>
+                <label class="govuk-label" for="product-selector">
                     Product
                 </label>
-                <select class="govuk-select" name="ProductLicence[-1].Product.ProductName">
-                    <option value="Bingo" selected>Bingo</option>
-                    <option value="Other">Other</option>
+                <select oninput="updateProductId(this)" data-linkedId="ProductLicence[-1].Product.ProductId" data-linkedName="ProductLicence[-1].Product.ProductName" class="govuk-select" name="product-selector">
+                    @foreach (var product in Products)
+                    {
+                        @if (product.ProductName == Products[0].ProductName)
+                        {
+                            <option value="@product.ProductId-@product.ProductName" selected>@product.ProductName</option>
+                        }
+                        else
+                        {
+                            <option value="@product.ProductId-@product.ProductName">@product.ProductName</option>
+                        }
 
+                    }
                 </select>
             </div>
             <div class="govuk-form-group">
@@ -309,4 +361,23 @@
     document.querySelector('form').addEventListener('input', function (event) {
         updateSubmissionButton();
     });
+
+    function updateProductId(element) {
+        const parts = element.value.split('-');
+        const id = parts[0];
+        const name = parts[1];
+        
+        const linkedId = element.getAttribute('data-linkedId');
+        const linkedName = element.getAttribute('data-linkedName');
+
+        document.querySelector(`input[name="${linkedId}"]`).value = id;
+        document.querySelector(`input[name="${linkedName}"]`).value = name;
+    }
+
+    function deleteAccount(event) {
+        event.preventDefault();
+        const form = document.getElementById('account-form');
+        form.action = "/accounts/delete";
+        form.submit();
+    }
 </script>

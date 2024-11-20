@@ -7,9 +7,11 @@ namespace LicenseeRecords.Web.Controllers
 {
     public class AccountsController : Controller
     {
-        AccountsService _accountsService;
-        public AccountsController(AccountsService accountsService) {
+        private readonly AccountsService _accountsService;
+        private readonly ProductsService _productsService;
+        public AccountsController(AccountsService accountsService, ProductsService productsService) {
             _accountsService = accountsService;
+            _productsService = productsService;
         }
         public async Task<IActionResult> Index()
         {
@@ -22,10 +24,15 @@ namespace LicenseeRecords.Web.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var account = await _accountsService.GetAccountByIdAsync(id);
+            var products = await _productsService.GetProductsAsync();
+
             if (account == null)
             {
                 return NotFound();
             }
+
+            ViewBag.Products = products.ToList();
+
             return View(account);
         }
 
@@ -38,12 +45,16 @@ namespace LicenseeRecords.Web.Controllers
 
                 return RedirectToAction("Success");
             }
-            return RedirectToAction("Failed");
+            return RedirectToAction("Error");
         }
 
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            var products = await _productsService.GetProductsAsync();
+
+            ViewBag.Products = products.ToList();
+
             Account account = new()
             {
                 AccountId = 0,
@@ -65,7 +76,20 @@ namespace LicenseeRecords.Web.Controllers
                 return RedirectToAction("Success");
             }
             // If the model state is invalid, return the view with the model to show validation errors
-            return RedirectToAction("Failed");
+            return RedirectToAction("Error");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Account account)
+        {
+            if (ModelState.IsValid)
+            {
+                await _accountsService.DeleteAccountAsync(account.AccountId);
+
+                return RedirectToAction("Success");
+            }
+            // If the model state is invalid, return the view with the model to show validation errors
+            return RedirectToAction("Error");
         }
 
         public IActionResult Success()
