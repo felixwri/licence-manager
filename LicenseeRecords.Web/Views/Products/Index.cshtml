@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LicenseeRecords.WebAPI.Models.Product>
+﻿@model IEnumerable<Product>
 @{
     ViewData["Title"] = "Product Managment";
 }
@@ -58,27 +58,6 @@
 <script>
     let addingProduct = false;
 
-    function editProduct(id, name) {
-        const form = document.getElementById('product-editor');
-        if (form.action === "/products/delete") {
-            form.action = "/products/update";
-        }
-
-        const backdrop = document.getElementById('product-backdrop');
-        backdrop.classList.remove('hidden');
-
-        const title = document.getElementById('product-editor-title');
-        title.innerText = `Update Product ${id}`;
-
-        const input = document.getElementById('product-editor-input');
-        input.value = name;
-
-        input.focus();
-
-        const hiddenInput = document.getElementById('product-editor-hidden');
-        hiddenInput.value = id;
-    }
-
     function addProduct() {
         if (addingProduct) return;
 
@@ -94,13 +73,6 @@
         addingProduct = true;
     }
 
-    function deleteProduct(event) {
-        event.preventDefault();
-        console.log("PREVENT")
-        const form = document.getElementById('product-editor');
-        form.action = "/products/delete";
-        form.submit();
-    }
 
     function cancelNewProduct() {
         if (!addingProduct) return;
@@ -113,11 +85,4 @@
 
         addingProduct = false;
     }
-
-    function closeProductEditor() {
-        const backdrop = document.getElementById('product-backdrop');
-        backdrop.classList.add('hidden');
-    }
-
-
 </script>

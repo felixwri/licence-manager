@@ -1,14 +1,14 @@
 ﻿using LicenseeRecords.Web.Services;
-using LicenseeRecords.WebAPI.Models;
+using LicenseeRecords.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LicenseeRecords.Web.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly ProductsService _productsService;
-        private readonly AccountsService _accountsService;
-        public ProductsController(ProductsService productsService, AccountsService accountsService)
+        private readonly IProductsService _productsService;
+        private readonly IAccountsService _accountsService;
+        public ProductsController(IProductsService productsService, IAccountsService accountsService)
         {
             _productsService = productsService;
             _accountsService = accountsService;

@@ -51,6 +51,10 @@ body {
     border-color: #11554C;
 }
 
+.govuk-service-navigation__toggle {
+    color: #11554C;
+}
+
 .govuk-service-navigation__link:not(:hover):not(:focus) {
     color: #11554C;
 }

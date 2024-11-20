@@ -14,4 +14,8 @@
     <ProjectReference Include="..\LicenseeRecords.WebAPI\LicenseeRecords.WebAPI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Enums\" />
+  </ItemGroup>
+
 </Project>

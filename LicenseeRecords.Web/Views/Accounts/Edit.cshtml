@@ -1,20 +1,20 @@
 ﻿@using Microsoft.AspNetCore.Mvc
-@model LicenseeRecords.WebAPI.Models.Account
+@using LicenseeRecords.Web.Enums
+@using LicenseeRecords.Web.Models
+@model Account
 @{
     ViewData["Title"] = "Account Editor";
 
-    var Products = ViewBag.Products as List<LicenseeRecords.WebAPI.Models.Product> ?? [];
-
-    Console.WriteLine(Products.Count());
+    List<Product> Products = ViewBag.Products as List<Product> ?? [];
 
     bool IsNewAccount = Model.AccountId == 0;
     string PostAction = IsNewAccount ? "Create" : "Edit";
 
-    bool AccountActive = Model.AccountStatus == LicenseeRecords.WebAPI.Enums.Status.Active;
+    bool AccountActive = Model.AccountStatus == Status.Active;
 
-    var ActiveLicences = Model.ProductLicence.Where(x => x.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active).ToList();
+    var ActiveLicences = Model.ProductLicence.Where(x => x.LicenceStatus == Status.Active).ToList();
 
-    var PreviousLicences = Model.ProductLicence.Where(x => x.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Inactive).ToList();
+    var PreviousLicences = Model.ProductLicence.Where(x => x.LicenceStatus == Status.Inactive).ToList();
 
     int Index = 0;
 }
@@ -106,7 +106,7 @@
                                 <select oninput="updateProductId(this)" data-linkedId="ProductLicence[@Index].Product.ProductId" data-linkedName="ProductLicence[@Index].Product.ProductName" class="govuk-select" name="product-selector">
                                     @foreach(var product in Products)
                                     {
-                                        @if(product.ProductName == ActiveLicence.Product.ProductName)
+                                        @if(product.ProductName == ActiveLicence?.Product.ProductName)
                                         {
                                             <option value="@product.ProductId-@product.ProductName" selected>@product.ProductName</option>
                                         } else                                         
@@ -131,7 +131,7 @@
                                     Licence Status
                                 </label>
                                 <select class="govuk-select" name="ProductLicence[@Index].LicenceStatus">
-                                    @if (ActiveLicence.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active)
+                                    @if (ActiveLicence.LicenceStatus == Status.Active)
                                     {
                                         <option value="Active" selected>Active</option>
                                         <option value="Inactive">Inactive</option>
@@ -148,7 +148,13 @@
                                 <label class="govuk-label" for="ProductLicence[@Index].LicenceToDate">
                                     Closing Date
                                 </label>
-                                <input class="govuk-input" name="ProductLicence[@Index].LicenceToDate" type="date">
+                                @if (ActiveLicence?.LicenceToDate != null)
+                                {
+                                    <input class="govuk-input" name="ProductLicence[@Index].LicenceToDate" type="datetime-local" value="@ActiveLicence?.LicenceToDate?.ToString("yyyy-MM-ddThh:mm")" />
+                                } else
+                                {
+                                    <input class="govuk-input" name="ProductLicence[@Index].LicenceToDate" type="datetime-local" />
+                                }
                             </div>
                         </div>
                         @{Index++;}
@@ -212,7 +218,7 @@
                                     Licence Status
                                 </label>
                                 <select class="govuk-select" name="ProductLicence[@Index].LicenceStatus">
-                                    @if (PreviousLicence.LicenceStatus == LicenseeRecords.WebAPI.Enums.Status.Active)
+                                    @if (PreviousLicence.LicenceStatus == Status.Active)
                                     {
                                         <option value="Active" selected>Active</option>
                                         <option value="Inactive">Inactive</option>
@@ -227,7 +233,7 @@
 
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="ProductLicence[@Index].LicenceToDate">
-                                    Date Closed
+                                    Closing Date
                                 </label>
                                 <input class="govuk-input" name="ProductLicence[@Index].LicenceToDate" type="datetime-local" value="@PreviousLicence?.LicenceToDate?.ToString("yyyy-MM-ddThh:mm")">
                             </div>
@@ -323,12 +329,14 @@
 
     function generateLicence() {
         const licence = document.getElementById("example-licence").innerHTML;
-
-        const container = document.getElementById("active-licence-container");
-
         const newLicence = licence.replace(/-1/g, index);
 
-        container.innerHTML += newLicence;
+        let node = document.createElement("div");
+        node.innerHTML = newLicence;
+        node.classList.add("new-licence");
+
+        const container = document.getElementById("active-licence-container");
+        container.appendChild(node)
         
         index++;
         updateSubmissionButton();

@@ -1,7 +1,7 @@
-﻿@model LicenseeRecords.WebAPI.Models.Product
+﻿@model Product
 @{
     ViewData["Title"] = "Edit Product";
-    var accounts = ViewBag.Dependencies as IEnumerable<LicenseeRecords.WebAPI.Models.Account> ?? [];
+    var accounts = ViewBag.Dependencies as IEnumerable<Account> ?? [];
 }
 
 <a href="/products" class="govuk-back-link">Back (cancel)</a>

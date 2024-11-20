@@ -1,18 +1,29 @@
-﻿using LicenseeRecords.WebAPI.Models;
+﻿using LicenseeRecords.Web.Models;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 
 namespace LicenseeRecords.Web.Services
 {
-    public class AccountsService
+    public interface IAccountsService
+    {
+        Task<IEnumerable<Account>> GetAccountsAsync();
+        Task<Account> GetAccountByIdAsync(int id);
+        Task UpdateAccountAsync(int id, Account account);
+        Task AddAccountAsync(Account account);
+        Task DeleteAccountAsync(int id);
+
+    }
+
+    public class AccountsService : IAccountsService
     {
         private readonly HttpClient _client;
-        private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        private readonly IJSONService _jsonService;
         private readonly string _UrlTarget = "accounts";
-        public AccountsService(HttpClient client)
+        public AccountsService(HttpClient client, IJSONService JSONService)
         {
             this._client = client;
+            this._jsonService = JSONService;
         }
 
         public async Task<IEnumerable<Account>> GetAccountsAsync()
@@ -23,7 +34,7 @@ namespace LicenseeRecords.Web.Services
 
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            var accounts = JsonSerializer.Deserialize<IEnumerable<Account>>(responseContent, _jsonOptions) ?? [];
+            var accounts = _jsonService.ReadJSON<IEnumerable<Account>>(responseContent) ?? [];
 
             return accounts;
         }
@@ -37,7 +48,7 @@ namespace LicenseeRecords.Web.Services
 
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            var account = JsonSerializer.Deserialize<Account>(responseContent, _jsonOptions)!;
+            var account = _jsonService.ReadJSON<Account>(responseContent);
 
             return account;
         }
@@ -46,7 +57,7 @@ namespace LicenseeRecords.Web.Services
         {
             string URL = _client.BaseAddress + _UrlTarget + "/" + id;
 
-            var httpContent = new StringContent(JsonSerializer.Serialize(account), Encoding.UTF8, "application/json");
+            HttpContent httpContent = _jsonService.ConvertToJSON(account);
 
             var response = await _client.PutAsync(URL, httpContent);
 
@@ -59,7 +70,7 @@ namespace LicenseeRecords.Web.Services
         {
             string URL = _client.BaseAddress + _UrlTarget + "/";
 
-            var httpContent = new StringContent(JsonSerializer.Serialize(account), Encoding.UTF8, "application/json");
+            HttpContent httpContent = _jsonService.ConvertToJSON(account);
 
             var response = await _client.PostAsync(URL, httpContent);
 

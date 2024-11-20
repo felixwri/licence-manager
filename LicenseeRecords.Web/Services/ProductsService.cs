@@ -1,10 +1,19 @@
-﻿using LicenseeRecords.WebAPI.Models;
+﻿using LicenseeRecords.Web.Models;
 using System.Text.Json;
 using System.Text;
 
 namespace LicenseeRecords.Web.Services
 {
-    public class ProductsService
+    public interface IProductsService
+    {
+        Task<IEnumerable<Product>> GetProductsAsync();
+        Task<Product> GetProductByIdAsync(int id);
+        Task UpdateProductAsync(int id, Product product);
+        Task AddProductAsync(Product product);
+        Task DeleteProductAsync(int id);
+
+    }
+    public class ProductsService : IProductsService
     {
         private readonly HttpClient _client;
         private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
