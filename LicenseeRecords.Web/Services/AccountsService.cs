@@ -22,7 +22,7 @@ namespace LicenseeRecords.Web.Services
 
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            var accounts = JsonSerializer.Deserialize<IEnumerable<Account>>(responseContent, _jsonOptions);
+            var accounts = JsonSerializer.Deserialize<IEnumerable<Account>>(responseContent, _jsonOptions) ?? [];
 
             return accounts;
         }
@@ -36,7 +36,7 @@ namespace LicenseeRecords.Web.Services
 
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            var account = JsonSerializer.Deserialize<Account>(responseContent, _jsonOptions);
+            var account = JsonSerializer.Deserialize<Account>(responseContent, _jsonOptions)!;
 
             return account;
         }
@@ -49,7 +49,7 @@ namespace LicenseeRecords.Web.Services
 
             var response = await _client.PutAsync(URL, httpContent);
 
-            var status = response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
 
             return;
         }
@@ -62,7 +62,7 @@ namespace LicenseeRecords.Web.Services
 
             var response = await _client.PostAsync(URL, httpContent);
 
-            var status = response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
 
             return;
         }

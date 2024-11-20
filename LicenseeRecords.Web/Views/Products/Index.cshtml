@@ -1,16 +1,123 @@
-﻿@{
+﻿@model IEnumerable<LicenseeRecords.WebAPI.Models.Product>
+@{
     ViewData["Title"] = "Product Managment";
 }
 
 <h1 class="govuk-heading-xl">Product Management</h1>
 
-<div class="govuk-grid-row">
+<div class="govuk-width-container">
+    <table class="govuk-table">
+        <thead>
+            <tr>
+                <th class="govuk-table__header">ID</th>
+                <th class="govuk-table__header">Name</th>
+                <th class="govuk-table__header"></th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            @foreach (var product in Model)
+            {
+                <tr id="product-@product.ProductId" class="govuk-table__row replaceable-row">
+                    <td class="govuk-table__cell">@product.ProductId</td>
+                    <td class="govuk-table__cell product-name">@product.ProductName</td>
+                    <td class="govuk-table__cell">
+                        <a asp-action="Edit" asp-route-id="@product.ProductId" class="govuk-button no-margin govuk-button--secondary" data-module="govuk-button">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-    <div class="govuk-grid-column-two-thirds">
-    </div>
+    <form id="product-creation" class="product-creation hidden" method="post" action="/products/add">
+        <input class="govuk-input" name="ProductId" type="hidden" value="0">
+        <div class="govuk-form-group">
+            <h1 class="govuk-label-wrapper">
+                <label class="govuk-label govuk-label--s" for="ProductName">
+                    New Product Name
+                </label>
+            </h1>
+            <input id="creation-input" class="govuk-input" name="ProductName" type="text">
+        </div>
+        <div>
+        <button type="submit" class="govuk-button no-margin static-button" style="margin-right: 1rem" data-module="govuk-button">
+            Create Product
+        </button>
+        <button onclick="cancelNewProduct()" type="button" class="govuk-button no-margin static-button govuk-button--secondary" data-module="govuk-button">
+            Cancel
+            </button>
+        </div>
+    </form>
 
-    <div class="govuk-grid-column-one-third">
-
-    </div>
-
+    <button id="addButton" onclick="addProduct()" class="govuk-button no-margin" data-module="govuk-button">
+        Add Product
+    </button>
 </div>
+
+<script>
+    let addingProduct = false;
+
+    function editProduct(id, name) {
+        const form = document.getElementById('product-editor');
+        if (form.action === "/products/delete") {
+            form.action = "/products/update";
+        }
+
+        const backdrop = document.getElementById('product-backdrop');
+        backdrop.classList.remove('hidden');
+
+        const title = document.getElementById('product-editor-title');
+        title.innerText = `Update Product ${id}`;
+
+        const input = document.getElementById('product-editor-input');
+        input.value = name;
+
+        input.focus();
+
+        const hiddenInput = document.getElementById('product-editor-hidden');
+        hiddenInput.value = id;
+    }
+
+    function addProduct() {
+        if (addingProduct) return;
+
+        const addBtn = document.getElementById('addButton');
+        addBtn.classList.add('hidden');
+
+        const container = document.getElementById('product-creation');
+        container.classList.remove('hidden');
+
+        const creationInput = document.getElementById('creation-input');
+        creationInput.focus();
+        
+        addingProduct = true;
+    }
+
+    function deleteProduct(event) {
+        event.preventDefault();
+        console.log("PREVENT")
+        const form = document.getElementById('product-editor');
+        form.action = "/products/delete";
+        form.submit();
+    }
+
+    function cancelNewProduct() {
+        if (!addingProduct) return;
+
+        const addBtn = document.getElementById('addButton');
+        addBtn.classList.remove('hidden');
+
+        const container = document.getElementById('product-creation');
+        container.classList.add('hidden');
+
+        addingProduct = false;
+    }
+
+    function closeProductEditor() {
+        const backdrop = document.getElementById('product-backdrop');
+        backdrop.classList.add('hidden');
+    }
+
+
+</script>

@@ -1,7 +1,6 @@
 ﻿using LicenseeRecords.WebAPI.Models;
 using LicenseeRecords.WebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Principal;
 
 namespace LicenseeRecords.WebAPI.Controllers
 {

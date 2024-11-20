@@ -1,0 +1,92 @@
+﻿@model LicenseeRecords.WebAPI.Models.Product
+@{
+    ViewData["Title"] = "Edit Product";
+    var accounts = ViewBag.Dependencies as IEnumerable<LicenseeRecords.WebAPI.Models.Account> ?? [];
+}
+
+<a href="/products" class="govuk-back-link">Back (cancel)</a>
+
+<h1 id="product-editor-title" class="govuk-heading-xl">Edit Product @Model.ProductId</h1>
+
+<form id="product-editor" method="post" action="/products/update">
+    <div class="product-row">
+        <input id="product-editor-hidden" class="govuk-input" name="ProductId" type="hidden" value="@Model.ProductId">
+        <div class="govuk-form-group">
+            <h1 class="govuk-label-wrapper">
+                <label class="govuk-label" for="ProductName">
+                    Product Name
+                </label>
+            </h1>
+            <input id="product-editor-input" class="govuk-input" name="ProductName" type="text" value="@Model.ProductName">
+        </div>
+
+        
+        <a href="/products" class="govuk-button static-button govuk-button--secondary" data-module="govuk-button">
+            Cancel
+        </a>
+    </div>
+
+    <div>
+        <h1 id="product-editor-title" class="govuk-heading-m">Product Dependencies</h1>
+
+        @if(accounts.Count() > 0)
+        {
+            <div class="govuk-error-summary" data-module="govuk-error-summary">
+                <div role="alert">
+                    <h2 class="govuk-error-summary__title">
+                        This product is used by other accounts
+                    </h2>
+                    <p class="govuk-body">Any changes to this product will affect these accounts</p>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach (var account in accounts)
+                            {
+                                <li>
+                                    <span>@account.AccountId</span> - <span>@account.AccountName</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        } else
+        {
+            <p class="govuk-body">No accounts are dependent on this product</p>
+            <p class="govuk-body">This product can safely be deleted</p>
+        }
+
+        <button type="submit" onclick="addProduct(event)" class="govuk-button static-button" data-module="govuk-button">
+            Update product
+        </button>
+
+        @if (accounts.Count() > 0)
+        {
+            <p class="govuk-body">Please update dependent accounts before deleting this product</p>
+            <button type="submit" onclick="deleteProduct(event)" class="govuk-button no-margin static-button govuk-button--warning" style="margin-right: 2rem" data-module="govuk-button">
+                Delete product anyway
+            </button>
+        }
+        else
+        {
+            <button type="submit" onclick="deleteProduct(event)" class="govuk-button no-margin static-button govuk-button--warning" style="margin-right: 2rem" data-module="govuk-button">
+                Delete Product
+            </button>
+        }
+    </div>
+</form>
+
+<script>
+    function addProduct(event) {
+        event.preventDefault();
+        const form = document.getElementById('product-editor');
+        form.action = "/products/update";
+        form.submit();
+    }
+
+    function deleteProduct(event) {
+        event.preventDefault();
+        const form = document.getElementById('product-editor');
+        form.action = "/products/delete";
+        form.submit();
+    }
+</script>

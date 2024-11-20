@@ -10,6 +10,11 @@ builder.Services.AddHttpClient<AccountsService>(client =>
 {
     client.BaseAddress = new Uri("http://localhost:5267/api/");
 });
+builder.Services.AddHttpClient<ProductsService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5267/api/");
+});
+
 
 var app = builder.Build();
 

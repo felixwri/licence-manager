@@ -14,7 +14,6 @@ namespace LicenseeRecords.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var accounts = await _accountsService.GetAccountsAsync();
-            Console.WriteLine(accounts.Count());
 
             return View(accounts);
         }

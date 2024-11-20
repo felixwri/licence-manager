@@ -266,6 +266,7 @@
 
 <script>
     let index = parseInt(@Index);
+    let hasChanges = false;
     const formType = "@(IsNewAccount ? "create" : "edit")";
 
     function generateLicence() {
@@ -282,6 +283,11 @@
     }
 
     function updateSubmissionButton() {
+        if (hasChanges) {
+            return;
+        }
+
+        hasChanges = true;
         const button = document.querySelector('#form-submission');
 
         if (formType == "create") { 
